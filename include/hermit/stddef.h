@@ -49,7 +49,7 @@ extern const size_t image_size;
 extern uint64_t tux_size;
 extern uint64_t tux_start_address;
 
-#define TIMER_FREQ	100 /* in HZ */
+#define TIMER_FREQ	10000 /* in HZ */
 #define CLOCK_TICK_RATE	1193182 /* 8254 chip's internal oscillator frequency */
 #define CACHE_LINE	64
 #define HEAP_START	(PAGE_CEIL(tux_start_address + tux_size) + 4*PAGE_SIZE)

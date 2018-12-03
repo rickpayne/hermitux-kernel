@@ -215,6 +215,8 @@ void fpu_handler(void)
 	restore_fpu_state(&task->fpu);
 }
 
+static uint64_t cpu_freq_hz = 0;
+
 void check_scheduling(void)
 {
 	if (!is_irq_enabled())
@@ -231,10 +233,9 @@ void check_scheduling(void)
 		// => reschedule to realize round robin
 
 		const uint64_t diff_cycles = get_rdtsc() - curr_task->last_tsc;
-		const uint64_t cpu_freq_hz = 1000000ULL * (uint64_t) get_cpu_frequency();
 
 		if (((diff_cycles * (uint64_t) TIMER_FREQ) / cpu_freq_hz) > 0) {
-			LOG_DEBUG("Time slice expired for task %d on core %d. New task has priority %u.\n", curr_task->id, CORE_ID, prio);
+			LOG_INFO("Time slice expired for task %d on core %d. New task has priority %u.\n", curr_task->id, CORE_ID, prio);
 			reschedule();
 		}
 #endif
@@ -261,6 +262,7 @@ void* get_readyqueue(void)
 int multitasking_init(void)
 {
 	uint32_t core_id = CORE_ID;
+	cpu_freq_hz = 1000000ULL * (uint64_t) get_cpu_frequency();
 
 	if (BUILTIN_EXPECT(task_table[0].status != TASK_IDLE, 0)) {
 		LOG_ERROR("Task 0 is not an idle task\n");

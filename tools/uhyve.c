@@ -1087,10 +1087,18 @@ static int vcpu_loop(void)
 				}
 
 			case UHYVE_PORT_NETWRITE: {
+					struct timeval start, stop, res;
 					unsigned data = *((unsigned*)((size_t)run+run->io.data_offset));
 					uhyve_netwrite_t* uhyve_netwrite = (uhyve_netwrite_t*)(guest_mem + data);
 					uhyve_netwrite->ret = 0;
+
+					//gettimeofday(&start, NULL);
 					ret = write(netfd, guest_mem + (size_t)uhyve_netwrite->data, uhyve_netwrite->len);
+					//gettimeofday(&stop, NULL);
+
+					//timersub(&stop, &start, &res);
+					//printf("%d.%06ld\n", res.tv_sec, res.tv_usec);
+
 					if (ret >= 0) {
 						uhyve_netwrite->ret = 0;
 						uhyve_netwrite->len = ret;

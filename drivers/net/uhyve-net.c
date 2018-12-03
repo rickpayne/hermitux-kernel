@@ -181,7 +181,7 @@ static void uhyve_netif_poll(void)
 		len += ETH_PAD_SIZE; /*allow room for Ethernet padding */
 #endif
 		p = pbuf_alloc(PBUF_RAW, len, PBUF_POOL);
-		if(p) {
+		if(likely(p)) {
 #if ETH_PAD_SIZE
 			pbuf_header(p, -ETH_PAD_SIZE); /*drop the padding word */
 #endif
@@ -196,7 +196,7 @@ static void uhyve_netif_poll(void)
 
 
 			//forward packet to the IP thread
-			if (tcpip_callback_with_block(consume_packet, p, 0) == ERR_OK) {
+			if (likely(tcpip_callback_with_block(consume_packet, p, 0) == ERR_OK)) {
 				LINK_STATS_INC(link.recv);
 			} else {
 				LINK_STATS_INC(link.drop);

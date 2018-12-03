@@ -52,10 +52,10 @@ uint64_t boot_tsc = 0;
 void check_ticks(void)
 {
 	// do we already know the cpu frequency? => if not, ignore this check
-	if (!cpu_freq)
+	if (unlikely(!cpu_freq))
 		return;
 
-	const uint64_t curr_rdtsc = has_rdtscp() ? rdtscp(NULL) : rdtsc();
+	const uint64_t curr_rdtsc = rdtscp(NULL);
 	rmb();
 
 	const uint64_t diff_cycles = curr_rdtsc - per_core(last_rdtsc);
